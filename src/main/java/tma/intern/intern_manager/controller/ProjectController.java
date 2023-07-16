@@ -23,6 +23,13 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
+    @GetMapping("/{id}")
+    ResponseEntity<ProjectDetailDto> getOne(
+            @PathVariable(name = "id") UUID id) {
+        ProjectDetailDto response = projectService.getProject(id);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping
     ResponseEntity<Page<ProjectDetailDto>> getList(
             @RequestParam(name = "page", defaultValue = "0") int page,

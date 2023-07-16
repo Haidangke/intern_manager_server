@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import tma.intern.intern_manager.dto.project.ProjectDetailDto;
 import tma.intern.intern_manager.dto.project.ProjectRequestDto;
 import tma.intern.intern_manager.entity.Project;
+import tma.intern.intern_manager.exception.ExistingException;
 import tma.intern.intern_manager.exception.NotFoundException;
 import tma.intern.intern_manager.repository.ProjectRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,11 +29,26 @@ public class ProjectServiceImpl implements  ProjectService {
 
     public Page<ProjectDetailDto> getListProject(PageRequest pr) {
         Page<Project> listProject = projectRepository.findAll(pr);
-        Page<ProjectDetailDto> response = listProject.map(entity -> mapper.map(entity, ProjectDetailDto.class));
+        return listProject.map(entity -> {
+            ProjectDetailDto project = mapper.map(entity, ProjectDetailDto.class);
+            project.setTotalIntern(entity.getProjectInterns().size());
+            return project;
+        });
+    }
+
+    @Override
+    public ProjectDetailDto getProject(UUID id) {
+        Project project = projectRepository.findById(id).orElseThrow(() -> new NotFoundException("Project is not found"));
+        ProjectDetailDto response = mapper.map(project, ProjectDetailDto.class);
+        response.setTotalIntern(project.getProjectInterns().size());
         return response;
     }
 
     public ProjectDetailDto addProject(ProjectRequestDto request) {
+        Optional<Project> existingProject = projectRepository.findByName(request.getName());
+        if(existingProject.isPresent()) {
+            throw new ExistingException("This project already exists");
+        }
         Project create = mapper.map(request, Project.class);
         Project newProject = projectRepository.save(create);
 
@@ -44,8 +61,7 @@ public class ProjectServiceImpl implements  ProjectService {
 
         existingProject.setName(request.getName());
         projectRepository.save(existingProject);
-        ProjectDetailDto response = mapper.map(existingProject, ProjectDetailDto.class);
-        return response;
+        return mapper.map(existingProject, ProjectDetailDto.class);
     }
 
     @Override

@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public interface ProjectService {
     Page<ProjectDetailDto> getListProject(PageRequest pr);
+    ProjectDetailDto getProject(UUID id);
     ProjectDetailDto addProject(ProjectRequestDto request);
     ProjectDetailDto updateProject(UUID id, ProjectRequestDto request);
     String deleteProject(UUID id);

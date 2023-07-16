@@ -7,15 +7,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import tma.intern.intern_manager.dto.intern.InternRequestDto;
 import tma.intern.intern_manager.dto.intern.InternDetailDto;
-import tma.intern.intern_manager.entity.Account;
-import tma.intern.intern_manager.entity.Intern;
-import tma.intern.intern_manager.entity.Mentor;
-import tma.intern.intern_manager.entity.Team;
+import tma.intern.intern_manager.entity.*;
 import tma.intern.intern_manager.exception.NotFoundException;
-import tma.intern.intern_manager.repository.AccountRepository;
-import tma.intern.intern_manager.repository.InternRepository;
-import tma.intern.intern_manager.repository.MentorRepository;
-import tma.intern.intern_manager.repository.TeamRepository;
+import tma.intern.intern_manager.repository.*;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -31,30 +25,36 @@ public class InternServiceImpl implements  InternService {
     @Autowired
     private final TeamRepository teamRepository;
     @Autowired
+    private final ProjectRepository projectRepository;
+    @Autowired
+    private final ProjectInternRepository projectInternRepository;
+    @Autowired
     private  final AccountRepository accountRepository;
+
 
     public InternServiceImpl(
             InternRepository internRepository,
             ModelMapper mapper, MentorRepository mentorRepository,
             TeamRepository teamRepository,
-            AccountRepository accountRepository) {
+            ProjectRepository projectRepository, ProjectInternRepository projectInternRepository, AccountRepository accountRepository) {
         this.internRepository = internRepository;
         this.mapper = mapper;
         this.mentorRepository = mentorRepository;
         this.teamRepository = teamRepository;
+        this.projectRepository = projectRepository;
+        this.projectInternRepository = projectInternRepository;
         this.accountRepository = accountRepository;
     }
 
     public Page<InternDetailDto> getListIntern(PageRequest pr) {
         Page<Intern> listIntern = internRepository.findAll(pr);
-        Page<InternDetailDto> response = listIntern.map(entity -> mapper.map(entity, InternDetailDto.class));
-        return response;
+        return listIntern.map(entity -> mapper.map(entity, InternDetailDto.class));
     }
+
 
     public InternDetailDto getInternById(UUID id) {
         Intern intern =  internRepository.findById(id).orElseThrow(() -> new NotFoundException("User is not found"));
-        InternDetailDto response = mapper.map(intern, InternDetailDto.class);
-        return response;
+        return mapper.map(intern, InternDetailDto.class);
     }
 
     public InternDetailDto addIntern(InternRequestDto request) {
@@ -87,6 +87,14 @@ public class InternServiceImpl implements  InternService {
     public Page<InternDetailDto> getListInternByTeam(PageRequest pr, UUID mentorId) {
         return internRepository.findAllByTeamId(mentorId, pr)
                 .map(entity -> mapper.map(entity, InternDetailDto.class));
+    }
+
+    public Page<InternDetailDto> getListInternNotInProject(UUID projectId, PageRequest pr) {
+        Project project = projectRepository
+                .findById(projectId)
+                .orElseThrow(() -> new NotFoundException("Project is not found"));
+        Page<Intern> interns = internRepository.findInternsNotInProject(project.getId(), pr);
+        return interns.map(intern -> mapper.map(intern, InternDetailDto.class));
     }
 
     public InternDetailDto updateIntern(UUID id, InternRequestDto request) {

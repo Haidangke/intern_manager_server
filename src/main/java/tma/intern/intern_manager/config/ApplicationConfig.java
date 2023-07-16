@@ -35,7 +35,7 @@ public class ApplicationConfig implements ApplicationRunner {
     AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
+         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
 

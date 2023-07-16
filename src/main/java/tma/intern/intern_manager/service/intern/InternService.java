@@ -18,6 +18,8 @@ public interface InternService {
 
     Page<InternDetailDto> getListInternByTeam(PageRequest pr, UUID teamId);
 
+    Page<InternDetailDto> getListInternNotInProject(UUID projectId, PageRequest pr);
+
     InternDetailDto updateIntern(UUID id, InternRequestDto request);
 
     String deleteIntern(UUID id);

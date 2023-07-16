@@ -1,14 +1,12 @@
-package tma.intern.intern_manager.dto.project;
+package tma.intern.intern_manager.dto.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProjectRequestDto {
-    private String name;
+public class ApiResponse {
+    String message;
 }

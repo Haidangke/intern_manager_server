@@ -6,11 +6,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import tma.intern.intern_manager.entity.Intern;
+import tma.intern.intern_manager.entity.Project;
 import tma.intern.intern_manager.entity.ProjectIntern;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface ProjectInternRepository extends JpaRepository<ProjectIntern, UUID> {
-    ProjectIntern findProjectInternByIntern(Intern intern);
+    Optional<ProjectIntern> findProjectInternByIntern(Intern intern);
+
+    Page<ProjectIntern> findProjectInternByProject(Project project, PageRequest pr);
 }

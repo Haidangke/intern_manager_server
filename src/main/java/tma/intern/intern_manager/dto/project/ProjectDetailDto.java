@@ -12,4 +12,5 @@ import java.util.UUID;
 public class ProjectDetailDto {
     private UUID id;
     private String name;
+    private int totalIntern;
 }

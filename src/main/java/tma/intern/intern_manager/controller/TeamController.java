@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tma.intern.intern_manager.dto.team.ITeamQuantity;
 import tma.intern.intern_manager.dto.team.TeamQuantity;
@@ -15,6 +16,7 @@ import tma.intern.intern_manager.service.team.TeamService;
 import java.util.UUID;
 
 @RestController
+@PreAuthorize("hasRole('ROLE_ADMIN') || hasRole('ROLE_MENTOR')")
 @RequestMapping(value = "/api/v1/teams")
 public class TeamController {
     @Autowired
